@@ -1,5 +1,7 @@
 # ai-act-high-risk
 
+> 📄 **[View the interactive skill page →](https://oliverschmidtprietz.github.io/EU-AI-Act-Suite/ai-act-high-risk/)**
+
 Depth assessment skill for the **EU AI Act high-risk classification under Art. 6** (Regulation (EU) 2024/1689), grounded in the European Commission's draft Art. 6(5) classification guidelines (general principles, Annex I, Annex III) published for stakeholder consultation in 2026.
 
 For the full classification workflow, see [SKILL.md](SKILL.md).

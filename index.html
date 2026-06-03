@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EU AI Act Suite — 7 interoperating Claude skills</title>
+    <meta name="description" content="Seven interoperating Claude skills for end-to-end EU AI Act (Regulation (EU) 2024/1689) compliance: triage, classification, high-risk depth, roles, obligations, knowledge Q&amp;A, and reports.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@800&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg: #F5F0E8;
+            --ink: #1A1A1A;
+            --ink-light: #4A4A4A;
+            --ink-muted: #8A8A7A;
+            --green: #00E676;
+            --green-dark: #00C853;
+            --pink: #FF4081;
+            --green-hl: #6FE0A8;
+            --blue-hl: #BFD9F5;
+            --border-w: 2.5px;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
+            background: var(--bg);
+            color: var(--ink);
+            font-size: 15px;
+            line-height: 1.65;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        /* ── NAV ─────────────────────────────── */
+        .nav {
+            position: sticky; top: 0; z-index: 100;
+            background: var(--bg);
+            border-bottom: var(--border-w) solid var(--ink);
+            padding: 0.8rem 1.5rem;
+            display: flex; align-items: center; gap: 0.8rem;
+        }
+        .nav-section-icon {
+            font-family: 'Instrument Serif', serif; font-size: 1.6rem; font-weight: 400;
+            background: var(--pink); color: white;
+            width: 2rem; height: 2rem;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        }
+        .nav-brand { font-weight: 700; font-size: 0.85rem; letter-spacing: 0.06em; text-transform: uppercase; }
+        .nav-version { font-size: 0.72rem; border: 1.5px solid var(--ink); padding: 0.15rem 0.5rem; letter-spacing: 0.04em; }
+        .nav-spacer { flex: 1; }
+        .nav-cta {
+            font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 700;
+            letter-spacing: 0.06em; text-transform: uppercase;
+            background: var(--green); color: var(--ink); border: none;
+            padding: 0.55rem 1.2rem; cursor: pointer; text-decoration: none; transition: background 0.15s;
+        }
+        .nav-cta:hover { background: var(--green-dark); }
+
+        /* ── HERO ────────────────────────────── */
+        .hero { padding: 3.5rem 1.5rem 3rem; max-width: 900px; }
+        .badges { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 3rem; }
+        .badge {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+            padding: 0.45rem 0.9rem; width: fit-content; border: 1.5px solid var(--ink);
+        }
+        .badge--live { background: var(--pink); color: white; border-color: var(--pink); }
+        .badge--live::before {
+            content: ''; width: 8px; height: 8px; border-radius: 50%;
+            background: var(--green); box-shadow: 0 0 6px var(--green);
+        }
+        .hero h1 {
+            font-family: 'Archivo', sans-serif; font-weight: 800;
+            font-size: clamp(3rem, 10vw, 5.5rem); line-height: 0.95;
+            text-transform: uppercase; letter-spacing: -0.02em; margin-bottom: 2.5rem;
+        }
+        .hero h1 em {
+            font-family: 'Instrument Serif', serif; font-style: italic;
+            text-transform: lowercase; font-weight: 400; letter-spacing: 0;
+        }
+        .hero h1 .hl-accent { background: var(--green-hl); padding: 0 0.15em; display: inline; }
+        .hero-sub { font-size: 0.95rem; line-height: 1.7; max-width: 620px; color: var(--ink); }
+        .hero-sub .hl { background: var(--blue-hl); padding: 0.05em 0.25em; }
+
+        /* ── SECTION ─────────────────────────── */
+        .section { padding: 3rem 1.5rem 0; max-width: 900px; }
+        .section-label {
+            font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+            color: var(--ink-muted); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;
+        }
+        .section-label .section-icon { font-family: 'Instrument Serif', serif; font-size: 1rem; color: var(--ink); }
+        .section h2 {
+            font-family: 'Archivo', sans-serif; font-weight: 800;
+            font-size: clamp(2rem, 7vw, 3.4rem); line-height: 1;
+            text-transform: uppercase; letter-spacing: -0.01em; margin-bottom: 1.5rem;
+        }
+        .section h2 em { font-family: 'Instrument Serif', serif; font-style: italic; text-transform: lowercase; font-weight: 400; }
+        .section-intro { font-size: 0.9rem; line-height: 1.7; max-width: 600px; color: var(--ink-light); }
+
+        /* ── SKILL CARDS ─────────────────────── */
+        .skills-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem; padding: 2.5rem 1.5rem 4rem; max-width: 900px;
+        }
+        .skill-card {
+            border: var(--border-w) solid var(--ink); padding: 1.8rem; position: relative;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            text-decoration: none; color: var(--ink); display: block;
+        }
+        .skill-card:hover { transform: translate(-3px, -3px); box-shadow: 3px 3px 0 var(--ink); }
+        .skill-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 0.6rem; margin-bottom: 1.2rem; }
+        .skill-badge {
+            display: inline-block; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+            background: var(--bg); border: 1.5px solid var(--ink); padding: 0.25rem 0.55rem;
+        }
+        .skill-family {
+            flex-shrink: 0; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+            background: var(--ink); color: var(--bg); padding: 0.3rem 0.55rem; white-space: nowrap;
+        }
+        .skill-number { font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 3.5rem; line-height: 1; letter-spacing: -0.02em; margin-bottom: 0.3rem; }
+        .skill-name { font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 1.25rem; line-height: 1.15; text-transform: uppercase; letter-spacing: 0.01em; margin-bottom: 1rem; }
+        .skill-desc { font-size: 0.82rem; line-height: 1.65; color: var(--ink-light); }
+        .skill-sep { border-top: 1px dashed var(--ink); margin: 1.2rem 0 0.8rem; opacity: 0.5; }
+        .skill-meta { display: flex; justify-content: space-between; font-size: 0.72rem; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-light); }
+        .skill-open { margin-top: 0.9rem; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+
+        /* ── INSTALL ─────────────────────────── */
+        .install { padding: 0 1.5rem 4rem; max-width: 900px; }
+        .install h2 { font-family: 'Archivo', sans-serif; font-weight: 800; font-size: clamp(1.6rem, 5vw, 2.4rem); text-transform: uppercase; margin-bottom: 1.2rem; }
+        .install pre {
+            border: var(--border-w) solid var(--ink); background: var(--ink); color: var(--bg);
+            padding: 1.4rem 1.6rem; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;
+            line-height: 1.7; overflow-x: auto; white-space: pre;
+        }
+        .install .install-note { font-size: 0.78rem; color: var(--ink-light); margin-top: 1rem; line-height: 1.6; }
+
+        /* ── FOOTER ──────────────────────────── */
+        .page-footer {
+            border-top: var(--border-w) solid var(--ink); padding: 2rem 1.5rem;
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
+        }
+        .footer-text { font-size: 0.72rem; color: var(--ink-muted); letter-spacing: 0.04em; }
+        .footer-links { display: flex; gap: 1.5rem; }
+        .footer-links a { font-size: 0.72rem; color: var(--ink-muted); text-decoration: none; letter-spacing: 0.04em; text-transform: uppercase; }
+        .footer-links a:hover { color: var(--ink); }
+
+        /* ── RESPONSIVE ──────────────────────── */
+        @media (max-width: 640px) {
+            .skills-grid { grid-template-columns: 1fr; padding: 2rem 1rem 3rem; }
+            .hero, .section, .install { padding-left: 1rem; padding-right: 1rem; }
+            .nav { padding: 0.7rem 1rem; }
+            .nav-cta { display: none; }
+        }
+        @media (min-width: 641px) and (max-width: 1024px) {
+            .skills-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAV -->
+    <nav class="nav">
+        <div class="nav-section-icon">§</div>
+        <span class="nav-brand">EU AI Act Suite</span>
+        <span class="nav-version">AGPL-3.0</span>
+        <div class="nav-spacer"></div>
+        <a href="#skills" class="nav-cta">SKILLS →</a>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="badges">
+            <div class="badge badge--live">LIVE · 7 SKILLS</div>
+            <div class="badge">REGULATION (EU) 2024/1689</div>
+            <div class="badge">AGPL-3.0 · SELF-HOSTED</div>
+        </div>
+
+        <h1>EU AI ACT<br><span class="hl-accent">SUITE.</span></h1>
+
+        <p class="hero-sub">
+            7 interoperating Claude skills for
+            <span class="hl">end-to-end EU AI Act compliance</span> — preliminary
+            triage, risk-tier classification, Art. 6 high-risk depth, role
+            determination, the obligation matrix, source-anchored Q&amp;A, and formal
+            reports. Run the whole suite for full cross-skill routing, or copy any
+            single skill folder into <code>~/.claude/skills/</code> to use it standalone.
+        </p>
+    </section>
+
+    <!-- SKILLS -->
+    <section class="section" id="skills">
+        <div class="section-label"><span class="section-icon">§</span> 01 · SKILLS</div>
+        <h2>SEVEN SKILLS.<br><em>One</em> WORKFLOW.</h2>
+        <p class="section-intro">
+            Each card opens that skill's own interactive page. The numbering follows
+            the recommended workflow: triage first, then classify, then go deep.
+        </p>
+    </section>
+
+    <div class="skills-grid">
+        <a class="skill-card" href="./ai-act-quick/" style="background-color: #FFC0B0;">
+            <div class="skill-head">
+                <div class="skill-badge">§ /ai-act-quick</div>
+                <div class="skill-family">AI ACT</div>
+            </div>
+            <div class="skill-number">01</div>
+            <div class="skill-name">AI ACT QUICK ASSESSMENT</div>
+            <p class="skill-desc">15-minute preliminary AI Act classification. Two-batch adaptive intake. Confidence indicator on every verdict. Automatic routing to depth skills when the preliminary result needs validation.</p>
+            <div class="skill-sep"></div>
+            <div class="skill-meta">
+                <span>v1.1</span>
+                <span>15 MIN TRIAGE</span>
+            </div>
+            <div class="skill-open">Open skill page →</div>
+        </a>
+        <a class="skill-card" href="./ai-act-classifier/" style="background-color: #FFD0B8;">
+            <div class="skill-head">
+                <div class="skill-badge">§ /ai-act-classifier</div>
+                <div class="skill-family">AI ACT</div>
+            </div>
+            <div class="skill-number">02</div>
+            <div class="skill-name">AI ACT CLASSIFICATION</div>
+            <p class="skill-desc">Art. 3(1) definition test against the OECD framework. Risk tiering across prohibited, high-risk, GPAI, limited, and minimal. Annex III cross-reference. Omnibus 2027/28 deadline tracking.</p>
+            <div class="skill-sep"></div>
+            <div class="skill-meta">
+                <span>v1.2</span>
+                <span>ART. 3(1)</span>
+            </div>
+            <div class="skill-open">Open skill page →</div>
+        </a>
+        <a class="skill-card" href="./ai-act-high-risk/" style="background-color: #C4DCC0;">
+            <div class="skill-head">
+                <div class="skill-badge">§ /ai-act-high-risk</div>
+                <div class="skill-family">AI ACT</div>
+            </div>
+            <div class="skill-number">03</div>
+            <div class="skill-name">AI ACT HIGH-RISK ASSESSMENT</div>
+            <p class="skill-desc">Depth assessment under Art. 6 grounded in the 2026 Commission draft guidelines. Annex I safety component + Annex III use case dual-pathway analysis. Art. 6(3) exception reasoning for borderline cases.</p>
+            <div class="skill-sep"></div>
+            <div class="skill-meta">
+                <span>v1.0</span>
+                <span>ART. 6</span>
+            </div>
+            <div class="skill-open">Open skill page →</div>
+        </a>
+        <a class="skill-card" href="./ai-act-roles/" style="background-color: #C4CCE8;">
+            <div class="skill-head">
+                <div class="skill-badge">§ /ai-act-roles</div>
+                <div class="skill-family">AI ACT</div>
+            </div>
+            <div class="skill-number">04</div>
+            <div class="skill-name">AI ACT ROLE DETERMINATION</div>
+            <p class="skill-desc">Provider, deployer, importer, distributor, or quasi-provider. Art. 25 substantial modification assessment. Catches the finetuning trap that turns deployers into providers with full Chapter III obligations.</p>
+            <div class="skill-sep"></div>
+            <div class="skill-meta">
+                <span>v1.0</span>
+                <span>VALUE CHAIN</span>
+            </div>
+            <div class="skill-open">Open skill page →</div>
+        </a>
+        <a class="skill-card" href="./ai-act-obligations/" style="background-color: #F4E8C8;">
+            <div class="skill-head">
+                <div class="skill-badge">§ /ai-act-obligations</div>
+                <div class="skill-family">AI ACT</div>
+            </div>
+            <div class="skill-number">05</div>
+            <div class="skill-name">AI ACT OBLIGATIONS MAPPER</div>
+            <p class="skill-desc">Full obligation extraction by role × risk tier. RACI assignments for cross-functional teams. Priority sequencing with AI Omnibus-adjusted deadlines. ISO 42001 management system alignment.</p>
+            <div class="skill-sep"></div>
+            <div class="skill-meta">
+                <span>v1.1</span>
+                <span>COMPLIANCE MATRIX</span>
+            </div>
+            <div class="skill-open">Open skill page →</div>
+        </a>
+        <a class="skill-card" href="./ai-act-knowledge/" style="background-color: #F4C8D4;">
+            <div class="skill-head">
+                <div class="skill-badge">§ /ai-act-knowledge</div>
+                <div class="skill-family">AI ACT</div>
+            </div>
+            <div class="skill-number">06</div>
+            <div class="skill-name">AI ACT KNOWLEDGE ENGINE</div>
+            <p class="skill-desc">70 structured reference files across 15 subdirectories. Sourced exclusively from EUR-Lex, EDPB, EDPS, ENISA, AI Office. Every answer cites the article, paragraph, and recital.</p>
+            <div class="skill-sep"></div>
+            <div class="skill-meta">
+                <span>v1.1</span>
+                <span>70 REFERENCE FILES</span>
+            </div>
+            <div class="skill-open">Open skill page →</div>
+        </a>
+        <a class="skill-card" href="./ai-act-report/" style="background-color: #B0E0D4;">
+            <div class="skill-head">
+                <div class="skill-badge">§ /ai-act-report</div>
+                <div class="skill-family">AI ACT</div>
+            </div>
+            <div class="skill-number">07</div>
+            <div class="skill-name">AI ACT EXAMINATION REPORT</div>
+            <p class="skill-desc">Formal Dokumentierter Prüfbericht for legal files and audit trails. Consolidates findings from classifier, high-risk, roles, and obligations skills into a signable, version-controlled document.</p>
+            <div class="skill-sep"></div>
+            <div class="skill-meta">
+                <span>v1.1</span>
+                <span>PRÜFBERICHT</span>
+            </div>
+            <div class="skill-open">Open skill page →</div>
+        </a>
+    </div>
+
+    <!-- INSTALL -->
+    <section class="install">
+        <h2>Install</h2>
+        <pre># Whole suite (recommended — preserves cross-skill routing):
+git clone https://github.com/oliverschmidtprietz/EU-AI-Act-Suite.git
+cp -r EU-AI-Act-Suite/ai-act-* ~/.claude/skills/
+
+# Single skill (standalone):
+cp -r EU-AI-Act-Suite/ai-act-classifier ~/.claude/skills/</pre>
+        <p class="install-note">
+            Some skills cross-reference siblings (e.g. <code>ai-act-obligations</code>
+            reads a timeline file from <code>ai-act-high-risk</code>). Installing a
+            single skill solo loses that cross-routing; the skill still works with
+            reduced linking. Install the whole suite for full behaviour.
+        </p>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="page-footer">
+        <span class="footer-text">EU AI Act Suite · 2026 · AGPL-3.0 · © Oliver Schmidt-Prietz</span>
+        <nav class="footer-links">
+            <a href="https://github.com/oliverschmidtprietz/EU-AI-Act-Suite">Repository</a>
+            <a href="https://github.com/oliverschmidtprietz">More skills</a>
+        </nav>
+    </footer>
+
+</body>
+</html>

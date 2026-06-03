@@ -1,5 +1,7 @@
 # EU AI Act Suite
 
+> 📄 **[View the interactive suite page →](https://oliverschmidtprietz.github.io/EU-AI-Act-Suite/)**  ·  per-skill pages are linked from there.
+
 Seven interoperating Claude skills for end-to-end EU AI Act (Regulation (EU) 2024/1689) compliance work. Use the whole suite for full cross-skill routing, or copy any single skill folder into `~/.claude/skills/` to run it standalone.
 
 ## Skills

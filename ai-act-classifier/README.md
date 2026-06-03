@@ -1,5 +1,7 @@
 # EU AI Act System Classifier — Deployment Guide
 
+> 📄 **[View the interactive skill page →](https://oliverschmidtprietz.github.io/EU-AI-Act-Suite/ai-act-classifier/)**
+
 See [CHANGELOG.md](CHANGELOG.md) for version history.
 
 ## Overview

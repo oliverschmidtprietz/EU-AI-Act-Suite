@@ -1,5 +1,7 @@
 # EU AI Act Knowledge Engine — Deployment Guide
 
+> 📄 **[View the interactive skill page →](https://oliverschmidtprietz.github.io/EU-AI-Act-Suite/ai-act-knowledge/)**
+
 See [CHANGELOG.md](CHANGELOG.md) for version history.
 
 ## Overview
