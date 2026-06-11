@@ -5,7 +5,7 @@ description: |
 metadata:
   author: Oliver Schmidt-Prietz
   license: AGPL-3.0
-  version: 1.1
+  version: 1.2
 ---
 
 # EU AI Act Quick Assessment
@@ -15,6 +15,14 @@ Fast triage tool (15-25 minutes) for preliminary AI Act classification and compl
 ## Disclaimer (show at session start, do not block)
 
 > **Important:** This is a preliminary AI Act assessment based on Regulation (EU) 2024/1689, designed for rapid triage. It is not legal advice and does not replace a full assessment — validate results using the detailed skills (ai-act-classifier, ai-act-high-risk for Art. 6 depth, ai-act-roles, ai-act-obligations, ai-act-report) and qualified legal counsel. Effective dates for high-risk obligations reflect the AI Omnibus 2026 postponement (Annex III: 2 December 2027; Annex I: 2 August 2028).
+
+---
+
+## Who this is for, and what kind of work this is
+
+**Operator.** This triage can be run by a **non-lawyer — a product owner, compliance manager, or founder scoping AI Act exposure** — as well as by counsel. That is exactly why the output is preliminary by construction: if you are not a lawyer, your job is to **route the resulting card to qualified counsel**, not to treat "Likely Minimal" as an all-clear. No special AI fluency is assumed beyond describing the system in plain language.
+
+**Work shape.** This is **bounded-transactional triage**: a single system run once through a fixed 6-gate sequence to produce a directional classification card — fast, pattern-matched, and deliberately shallow. It is the *opening* move of an accretive workflow, not the conclusion: a plausible high-risk or prohibited branch is meant to escalate into the full Art. 6 assessment and counsel, never to stop at the card. The speed is bought by narrowing scope, and the skill stays inside that narrow scope.
 
 ---
 
@@ -124,6 +132,18 @@ Process the answers through the 6-step gate sequence **internally** (do not ask 
 
 **Gate 6: Transparency Triggers (Art. 50)**
 - Check for direct human interaction, synthetic content generation, emotion recognition, deep fakes
+
+---
+
+### Confidence — three bands, three behaviors
+
+The `Confidence` field in the output is not decorative. Each level changes what you do with the determination, so an ambiguous call never reads the same as a clear one:
+
+- **High** — the gates land cleanly on the facts given → **proceed**: present the card as a confident preliminary, with the normal "validate before compliance decisions" caveat.
+- **Medium** — the classification turns on an assumption or a field marked partially covered → **surface and ask**: state the determination, but name the specific assumption it rests on and put the open question to the user rather than smoothing it over.
+- **Low** — key facts are missing, the system sits on a risk-tier boundary, or an Art. 5 / Annex III branch is plausible but unconfirmed → **hand back**: lead with the uncertainty, flag the higher risk tier as the working assumption, and make escalation to the full assessment and counsel the headline, not a footnote.
+
+When in doubt between two bands, pick the lower one.
 
 ---
 
@@ -263,7 +283,7 @@ If requested, use the templates from [/ai-act-report/references/output-templates
 1. **This is a triage tool** — always recommend running detailed skills for compliance decisions
 2. **"Likely" is not "confirmed"** — preliminary determinations require validation
 3. **Err on the side of caution** — if uncertain between risk tiers, flag the higher risk tier as possible
-4. **Flag uncertainty explicitly** — Low confidence ratings require immediate follow-up with detailed skills
+4. **Flag uncertainty explicitly** — the Confidence band drives behavior: High → proceed, Medium → surface the assumption and ask, Low → lead with the uncertainty and hand back (see *Confidence — three bands, three behaviors*)
 5. **National requirements matter** — always flag jurisdiction-specific obligations using [references/jurisdiction-flags.md]
 6. **Compliance timeline** — reference [references/compliance-deadlines.md] for deadline urgency
 7. **Enforcement exposure** — reference [/ai-act-classifier/references/enforcement-framework.md] for penalty context

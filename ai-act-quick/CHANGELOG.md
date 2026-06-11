@@ -6,6 +6,18 @@ Format: `## [vX.Y] — YYYY-MM-DD`
 
 ---
 
+## [v1.2] — 2026-06-11
+
+Audience-clarity + active-confidence guidance from the LegalQuants QA review (PR #8). No change to the 2-batch intake, 6-gate sequence, or the preliminary output template.
+
+- **"Who this is for" + escalation duty.** Names the operator (which may be a non-lawyer product owner / compliance manager / founder) and makes explicit that a non-lawyer must route the card to counsel rather than treat "Likely Minimal" as an all-clear.
+- **Work shape stated.** Names the work as bounded-transactional triage that opens an accretive full assessment, anchoring the speed framing to a delegation posture.
+- **Confidence bands now drive behavior.** The existing High / Medium / Low field is wired to three distinct behaviors — High = proceed, Medium = surface the assumption and ask, Low = lead with the uncertainty and hand back — so an ambiguous determination no longer reads as a uniform "Likely". Wired into the Critical Reminders.
+
+**Status:** reviewed (carried from v1.1) — additive guidance, no change to classification logic.
+
+---
+
 ## [v1.1] — 2026-05-19
 
 AI Omnibus timeline + routing handoff.
